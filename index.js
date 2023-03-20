@@ -31,6 +31,7 @@ client.on('messageCreate', async message => {
                     message.channel.reply('Error while clearing messages!');
                 }
                 break;
+
             case 'kick':
                 try {
                     if (!message.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
@@ -40,18 +41,98 @@ client.on('messageCreate', async message => {
                             message.reply('Please specify a user to kick.');
                         } else {
                             const target = message.mentions.members.first();
-                            if (!target) {
-                                message.reply('Please specify a user to kick.');
-                            } else if (target.id === message.member.id) {
+                            if (target.id === message.member.id) {
                                 message.reply('Cannot kick self.');
                             } else if (target.roles.highest.position >= message.member.roles.highest.position) {
                                 message.reply('Cannot kick users with a higher rank.');
                             } else {
                                 if (!target.kickable) {
-                                    message.reply('Cannot kick users with a higher rank.');
+                                    message.reply('Cannot kick that user.');
                                 } else {
-                                    (await target.ban()) + message.reply('User successfully kicked.');
+                                    (await target.kick()) + message.reply('User successfully kicked.');
                                 }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                    message.reply('Error.');
+                }
+                break;
+
+            case 'ban':
+                try {
+                    if (!message.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
+                        message.reply('Insufficient Permissions.');
+                    } else {
+                        if (!msgArgs[1]) {
+                            message.reply('Please specify a user to ban.');
+                        } else {
+                            const target = message.mentions.members.first();
+                            if (target.id === message.member.id) {
+                                message.reply('Cannot ban self.');
+                            } else if (target.roles.highest.position >= message.member.roles.highest.position) {
+                                message.reply('Cannot ban users with a higher rank.');
+                            } else {
+                                if (!target.bannable) {
+                                    message.reply('Cannot ban that user.');
+                                } else {
+                                    (await target.ban()) + message.reply('User successfully banned.');
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                    message.reply('Error.');
+                }
+                break;
+
+            case 'mute':
+                try {
+                    const mutedRole = message.guild.roles.cache.find((role) => role.name === 'Muted');
+                    if (!mutedRole) {
+                        message.reply('No Muted Role. Please contact an administrator.');
+                    }
+                    else if (!message.member.permissions.has(PermissionsBitField.Flags.MuteMembers)) {
+                        message.reply('Insufficient Permissions.');
+                    } else {
+                        if (!msgArgs[1]) {
+                            message.reply('Please specify a user to mute.');
+                        } else {
+                            const target = message.mentions.members.first();
+                            if (target.roles.highest.position >= message.member.roles.highest.position) {
+                                message.reply('Cannot mute users with a higher rank.');
+                            } else {
+                                target.roles.add(mutedRole);
+                                message.reply('User successfully muted.');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                    message.reply('Error.');
+                }
+                break;
+
+            case 'unmute':
+                try {
+                    const mutedRole = message.guild.roles.cache.find((role) => role.name === 'Muted');
+                    if (!mutedRole) {
+                        message.reply('No Muted Role. Please contact an administrator.');
+                    }
+                    else if (!message.member.permissions.has(PermissionsBitField.Flags.MuteMembers)) {
+                        message.reply('Insufficient Permissions.');
+                    } else {
+                        if (!msgArgs[1]) {
+                            message.reply('Please specify a user to unmute.');
+                        } else {
+                            const target = message.mentions.members.first();
+                            if (target.roles.highest.position >= message.member.roles.highest.position) {
+                                message.reply('Cannot unmute users with a higher rank.');
+                            } else {
+                                target.roles.remove(mutedRole);
+                                message.reply('User successfully unmuted.');
                             }
                         }
                     }
