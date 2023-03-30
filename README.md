@@ -24,7 +24,9 @@ Getting Started
 
 8. Install the Discord.js library by running npm install discord.js.
 
-9. In your preferred terminal, run the command node index.js. The message "Bot is online!" should appear.
+9. Paste your "Token" in a .env file where it will read from
+
+10. In your preferred terminal, run the command node index.js. The message "Bot is online!" should appear.
 
 And that's it! You're ready to start using Discord Bot Ultra on your server.
 
